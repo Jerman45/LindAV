@@ -4,14 +4,12 @@ import 'intro_page.dart';
 import 'network_status_page.dart';
 import 'scan_page.dart';
 import 'tests_page.dart';
+import 'theme_controller.dart';
+import 'widgets/page_route.dart';
+import 'widgets/responsive.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  // Green color palette
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
-  static const Color _teal = Color(0xFF14B8A6);
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +25,8 @@ class HomePage extends StatelessWidget {
             right: 0,
             child: Container(
               height: size.height * 0.28,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [_emerald, _green, _teal],
-                ),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientFor(context),
               ),
               child: SafeArea(
                 child: Padding(
@@ -47,12 +41,9 @@ class HomePage extends StatelessWidget {
                         children: [
                           // Back to intro button
                           TextButton.icon(
-                            onPressed: () =>
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (_) => const IntroPage(),
-                                  ),
-                                ),
+                            onPressed: () => Navigator.of(
+                              context,
+                            ).pushReplacement(appPageRoute(const IntroPage())),
                             icon: const Icon(
                               Icons.arrow_back,
                               color: Colors.white,
@@ -145,119 +136,120 @@ class HomePage extends StatelessWidget {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quick Actions',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                child: ResponsiveBody(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Quick Actions',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    _FeatureCard(
-                      icon: Icons.shield_moon,
-                      title: 'Run a Scan',
-                      description:
-                          'Launch quick, full, or USB scans to detect suspicious activity.',
-                      gradient: const LinearGradient(
-                        colors: [_emerald, _green],
+                      const SizedBox(height: 16),
+                      _FeatureCard(
+                        icon: Icons.shield_moon,
+                        title: 'Run a Scan',
+                        description:
+                            'Launch quick, full, or USB scans to detect suspicious activity.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.emerald, AppColors.green],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const ScanPage())),
                       ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ScanPage()),
+                      const SizedBox(height: 12),
+                      _FeatureCard(
+                        icon: Icons.security,
+                        title: 'Security Center',
+                        description:
+                            'Manage account protection, sessions, and privacy settings.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.green, AppColors.teal],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const TestsPage())),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _FeatureCard(
-                      icon: Icons.security,
-                      title: 'Security Center',
-                      description:
-                          'Manage account protection, sessions, and privacy settings.',
-                      gradient: const LinearGradient(colors: [_green, _teal]),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const TestsPage()),
+                      const SizedBox(height: 12),
+                      _FeatureCard(
+                        icon: Icons.wifi_tethering,
+                        title: 'Network Status',
+                        description:
+                            'Inspect connection, run speed tests, and scan WiFi networks.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.teal, AppColors.deepTeal],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const NetworkStatusPage())),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _FeatureCard(
-                      icon: Icons.wifi_tethering,
-                      title: 'Network Status',
-                      description:
-                          'Inspect connection, run speed tests, and scan WiFi networks.',
-                      gradient: const LinearGradient(
-                        colors: [_teal, Color(0xFF0D9488)],
+                      const SizedBox(height: 12),
+                      _FeatureCard(
+                        icon: Icons.speed,
+                        title: 'Device Performance',
+                        description:
+                            'Monitor CPU, memory, storage, battery, and network usage.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.deepTeal, Color(0xFF0891B2)],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const DevicePerformancePage())),
                       ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const NetworkStatusPage(),
+                      const SizedBox(height: 24),
+                      // Status card
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.emerald.withAlpha(20),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppColors.emerald.withAlpha(50),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.emerald.withAlpha(30),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check_circle,
+                                color: AppColors.emerald,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Protection Active',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.emerald,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'All security features are enabled',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.emerald.withAlpha(180),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _FeatureCard(
-                      icon: Icons.speed,
-                      title: 'Device Performance',
-                      description:
-                          'Monitor CPU, memory, storage, battery, and network usage.',
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF0D9488), Color(0xFF0891B2)],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const DevicePerformancePage(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Status card
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: _emerald.withAlpha(20),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: _emerald.withAlpha(50)),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: _emerald.withAlpha(30),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.check_circle,
-                              color: _emerald,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Protection Active',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _emerald,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'All security features are enabled',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: _emerald.withAlpha(180),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

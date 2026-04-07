@@ -10,6 +10,8 @@ import 'settings_page.dart';
 import 'threat_details_page.dart';
 import 'widgets/network_status_widget.dart';
 import 'theme_controller.dart';
+import 'widgets/page_route.dart';
+import 'widgets/responsive.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -267,8 +269,8 @@ class _ScanPageState extends State<ScanPage> {
     if (!mounted) return;
     if (detectedThreats.isNotEmpty) {
       await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ThreatDetailsPage(
+        appPageRoute(
+          ThreatDetailsPage(
             threats: detectedThreats,
             scanType: type,
             scanTime: result.dateTime,
@@ -297,9 +299,7 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   // Green color palette
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
-  static const Color _teal = Color(0xFF14B8A6);
+  static const Color _emerald = AppColors.emerald;
 
   @override
   Widget build(BuildContext context) {
@@ -342,12 +342,8 @@ class _ScanPageState extends State<ScanPage> {
               right: 0,
               child: Container(
                 height: size.height * 0.28,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [_emerald, _green, _teal],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: AppColors.gradientFor(context),
                 ),
                 child: SafeArea(
                   child: Padding(
@@ -446,99 +442,101 @@ class _ScanPageState extends State<ScanPage> {
                 ),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _SecurityStatusCard(
-                        isScanning: _isScanning,
-                        latest: latest,
-                        progress: _progress,
-                      ),
-                      const SizedBox(height: 16),
-                      _ScanActions(
-                        onQuickScan: () => _startScan('Quick Scan'),
-                        onFullScan: _startFolderScan,
-                        onUsbScan: _startUsbScan,
-                        isScanning: _isScanning,
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Icon(Icons.history, size: 20, color: _emerald),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Scan History',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          if (_history.isNotEmpty)
-                            TextButton.icon(
-                              onPressed: _clearHistory,
-                              icon: Icon(
-                                Icons.delete_outline,
-                                size: 18,
-                                color: Colors.red.shade400,
-                              ),
-                              label: Text(
-                                'Clear',
-                                style: TextStyle(color: Colors.red.shade400),
-                              ),
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                              ),
+                  child: ResponsiveBody(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _SecurityStatusCard(
+                          isScanning: _isScanning,
+                          latest: latest,
+                          progress: _progress,
+                        ),
+                        const SizedBox(height: 16),
+                        _ScanActions(
+                          onQuickScan: () => _startScan('Quick Scan'),
+                          onFullScan: _startFolderScan,
+                          onUsbScan: _startUsbScan,
+                          isScanning: _isScanning,
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Icon(Icons.history, size: 20, color: _emerald),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Scan History',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      if (_history.isEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: _emerald.withAlpha(15),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: _emerald.withAlpha(40)),
-                          ),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.search_off,
-                                size: 48,
-                                color: _emerald.withAlpha(100),
-                              ),
-                              const SizedBox(height: 12),
-                              const Text(
-                                'No scans yet',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Tap Quick Scan to start protecting your device',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
+                            const Spacer(),
+                            if (_history.isNotEmpty)
+                              TextButton.icon(
+                                onPressed: _clearHistory,
+                                icon: Icon(
+                                  Icons.delete_outline,
+                                  size: 18,
+                                  color: Colors.red.shade400,
                                 ),
-                                textAlign: TextAlign.center,
+                                label: Text(
+                                  'Clear',
+                                  style: TextStyle(color: Colors.red.shade400),
+                                ),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                ),
                               ),
-                            ],
-                          ),
-                        )
-                      else
-                        ...List.generate(_history.length, (index) {
-                          final item = _history[index];
-                          return _HistoryTile(
-                            result: item,
-                            onTap: () {
-                              if (item.threatsFound > 0 &&
-                                  item.detectedThreats.isNotEmpty) {
-                                _viewThreatDetails(item);
-                              }
-                            },
-                          );
-                        }),
-                    ],
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (_history.isEmpty)
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: _emerald.withAlpha(15),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: _emerald.withAlpha(40)),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 48,
+                                  color: _emerald.withAlpha(100),
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'No scans yet',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tap Quick Scan to start protecting your device',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[600],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          ...List.generate(_history.length, (index) {
+                            final item = _history[index];
+                            return _HistoryTile(
+                              result: item,
+                              onTap: () {
+                                if (item.threatsFound > 0 &&
+                                    item.detectedThreats.isNotEmpty) {
+                                  _viewThreatDetails(item);
+                                }
+                              },
+                            );
+                          }),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -551,8 +549,8 @@ class _ScanPageState extends State<ScanPage> {
 
   void _viewThreatDetails(ScanResult scanResult) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ThreatDetailsPage(
+      appPageRoute(
+        ThreatDetailsPage(
           threats: scanResult.detectedThreats,
           scanType: scanResult.type,
           scanTime: scanResult.dateTime,
@@ -612,7 +610,7 @@ class _ScanPageState extends State<ScanPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Scan history cleared'),
-          backgroundColor: Color(0xFF059669),
+          backgroundColor: AppColors.emerald,
         ),
       );
     }
@@ -645,8 +643,8 @@ class _ScanPageState extends State<ScanPage> {
 
   Future<void> _openSettings() async {
     final result = await Navigator.of(context).push<SettingsResult>(
-      MaterialPageRoute(
-        builder: (context) => SettingsPage(
+      appPageRoute(
+        SettingsPage(
           autoScanUsb: _autoScanUsb,
           deepScan: _deepScan,
           realTimeProtection: _realTimeProtection,
@@ -902,8 +900,8 @@ class _HistoryTile extends StatelessWidget {
 
   const _HistoryTile({required this.result, required this.onTap});
 
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
+  static const Color _emerald = AppColors.emerald;
+  static const Color _green = AppColors.green;
 
   @override
   Widget build(BuildContext context) {

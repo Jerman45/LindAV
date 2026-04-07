@@ -3,10 +3,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-// Green color palette
-const Color _emerald = Color(0xFF059669);
-const Color _green = Color(0xFF10B981);
-const Color _teal = Color(0xFF14B8A6);
+import 'theme_controller.dart';
+import 'widgets/responsive.dart';
+
+// Aliases for backward compatibility within this file
+const Color _emerald = AppColors.emerald;
+const Color _green = AppColors.green;
 
 class DevicePerformancePage extends StatefulWidget {
   const DevicePerformancePage({super.key});
@@ -145,12 +147,8 @@ class _DevicePerformancePageState extends State<DevicePerformancePage>
             right: 0,
             child: Container(
               height: size.height * 0.28,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [_emerald, _green, _teal],
-                ),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientFor(context),
               ),
               child: SafeArea(
                 child: Padding(
@@ -242,203 +240,219 @@ class _DevicePerformancePageState extends State<DevicePerformancePage>
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                   children: [
-                    // Circular Gauges Row
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(10),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
+                    ResponsiveBody(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [_emerald, _green],
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
+                          // Circular Gauges Row
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(10),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 ),
-                                child: const Icon(
-                                  Icons.dashboard,
-                                  color: Colors.white,
-                                  size: 20,
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [_emerald, _green],
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Icon(
+                                        Icons.dashboard,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'System Overview',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'System Overview',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                                const SizedBox(height: 24),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _CircularGauge(
+                                      value: _cpuUsage,
+                                      maxValue: 100,
+                                      label: 'CPU',
+                                      color: _getUsageColor(_cpuUsage),
+                                      size: 90,
+                                    ),
+                                    _CircularGauge(
+                                      value: _memoryUsage,
+                                      maxValue: 100,
+                                      label: 'Memory',
+                                      color: _getUsageColor(_memoryUsage),
+                                      size: 90,
+                                    ),
+                                    _CircularGauge(
+                                      value: _batteryLevel,
+                                      maxValue: 100,
+                                      label: 'Battery',
+                                      color: _getBatteryColor(_batteryLevel),
+                                      size: 90,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _CircularGauge(
-                                value: _cpuUsage,
-                                maxValue: 100,
-                                label: 'CPU',
-                                color: _getUsageColor(_cpuUsage),
-                                size: 90,
-                              ),
-                              _CircularGauge(
-                                value: _memoryUsage,
-                                maxValue: 100,
-                                label: 'Memory',
-                                color: _getUsageColor(_memoryUsage),
-                                size: 90,
-                              ),
-                              _CircularGauge(
-                                value: _batteryLevel,
-                                maxValue: 100,
-                                label: 'Battery',
-                                color: _getBatteryColor(_batteryLevel),
-                                size: 90,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                    // Multi-line comparison graph
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(10),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [_emerald, _green],
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
+                          // Multi-line comparison graph
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(10),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 ),
-                                child: const Icon(
-                                  Icons.show_chart,
-                                  color: Colors.white,
-                                  size: 20,
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [_emerald, _green],
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Icon(
+                                        Icons.show_chart,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Performance History',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'Performance History',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                                const SizedBox(height: 20),
+                                _MultiLineGraph(
+                                  datasets: [_cpuHistory, _memoryHistory],
+                                  colors: [_emerald, Colors.blue],
+                                  labels: ['CPU', 'Memory'],
+                                  height: 140,
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 20),
-                          _MultiLineGraph(
-                            datasets: [_cpuHistory, _memoryHistory],
-                            colors: [_emerald, Colors.blue],
-                            labels: ['CPU', 'Memory'],
-                            height: 140,
+
+                          // CPU Card
+                          _PerformanceCard(
+                            title: 'CPU Usage',
+                            icon: Icons.memory,
+                            value: '${_cpuUsage.toStringAsFixed(1)}%',
+                            subtitle: 'ARM Processor',
+                            progress: _cpuUsage / 100,
+                            progressColor: _getUsageColor(_cpuUsage),
+                            history: _cpuHistory,
+                            details: [
+                              _DetailRow(label: 'Cores', value: '8'),
+                              _DetailRow(
+                                label: 'Speed',
+                                value:
+                                    '${(1.8 + _cpuUsage / 100).toStringAsFixed(2)} GHz',
+                              ),
+                              _DetailRow(
+                                label: 'Processes',
+                                value: '${150 + (_cpuUsage * 2).toInt()}',
+                              ),
+                            ],
                           ),
+                          const SizedBox(height: 16),
+
+                          // Memory Card
+                          _PerformanceCard(
+                            title: 'Memory',
+                            icon: Icons.storage,
+                            value: '${_memoryUsed.toStringAsFixed(1)} GB',
+                            subtitle:
+                                '${_memoryTotal.toStringAsFixed(0)} GB Total',
+                            progress: _memoryUsage / 100,
+                            progressColor: _getUsageColor(_memoryUsage),
+                            history: _memoryHistory,
+                            details: [
+                              _DetailRow(
+                                label: 'In Use',
+                                value:
+                                    '${_memoryUsed.toStringAsFixed(1)} GB (${_memoryUsage.toStringAsFixed(0)}%)',
+                              ),
+                              _DetailRow(
+                                label: 'Available',
+                                value:
+                                    '${(_memoryTotal - _memoryUsed).toStringAsFixed(1)} GB',
+                              ),
+                              _DetailRow(label: 'Cached', value: '1.2 GB'),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Storage Card
+                          _StorageCard(
+                            storageUsed: _storageUsed,
+                            storageTotal: _storageTotal,
+                            storageUsage: _storageUsage,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Network Card
+                          _NetworkCard(
+                            networkType: _networkType,
+                            networkSpeed: _networkSpeed,
+                            history: _networkHistory,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Battery Card
+                          _BatteryCard(
+                            batteryLevel: _batteryLevel,
+                            isCharging: _isCharging,
+                          ),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // CPU Card
-                    _PerformanceCard(
-                      title: 'CPU Usage',
-                      icon: Icons.memory,
-                      value: '${_cpuUsage.toStringAsFixed(1)}%',
-                      subtitle: 'ARM Processor',
-                      progress: _cpuUsage / 100,
-                      progressColor: _getUsageColor(_cpuUsage),
-                      history: _cpuHistory,
-                      details: [
-                        _DetailRow(label: 'Cores', value: '8'),
-                        _DetailRow(
-                          label: 'Speed',
-                          value:
-                              '${(1.8 + _cpuUsage / 100).toStringAsFixed(2)} GHz',
-                        ),
-                        _DetailRow(
-                          label: 'Processes',
-                          value: '${150 + (_cpuUsage * 2).toInt()}',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Memory Card
-                    _PerformanceCard(
-                      title: 'Memory',
-                      icon: Icons.storage,
-                      value: '${_memoryUsed.toStringAsFixed(1)} GB',
-                      subtitle: '${_memoryTotal.toStringAsFixed(0)} GB Total',
-                      progress: _memoryUsage / 100,
-                      progressColor: _getUsageColor(_memoryUsage),
-                      history: _memoryHistory,
-                      details: [
-                        _DetailRow(
-                          label: 'In Use',
-                          value:
-                              '${_memoryUsed.toStringAsFixed(1)} GB (${_memoryUsage.toStringAsFixed(0)}%)',
-                        ),
-                        _DetailRow(
-                          label: 'Available',
-                          value:
-                              '${(_memoryTotal - _memoryUsed).toStringAsFixed(1)} GB',
-                        ),
-                        _DetailRow(label: 'Cached', value: '1.2 GB'),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Storage Card
-                    _StorageCard(
-                      storageUsed: _storageUsed,
-                      storageTotal: _storageTotal,
-                      storageUsage: _storageUsage,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Network Card
-                    _NetworkCard(
-                      networkType: _networkType,
-                      networkSpeed: _networkSpeed,
-                      history: _networkHistory,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Battery Card
-                    _BatteryCard(
-                      batteryLevel: _batteryLevel,
-                      isCharging: _isCharging,
-                    ),
-                    const SizedBox(height: 24),
                   ],
                 ),
               ),

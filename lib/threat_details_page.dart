@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'theme_controller.dart';
+
 /// Represents a detected threat with detailed information
 class ThreatInfo {
   final String filePath;
@@ -107,9 +109,8 @@ class ThreatDetailsPage extends StatelessWidget {
   });
 
   // Green color palette
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
-  static const Color _teal = Color(0xFF14B8A6);
+  static const Color _emerald = AppColors.emerald;
+  static const Color _teal = AppColors.teal;
 
   @override
   Widget build(BuildContext context) {
@@ -125,12 +126,8 @@ class ThreatDetailsPage extends StatelessWidget {
             right: 0,
             child: Container(
               height: size.height * 0.38,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [_emerald, _green, _teal],
-                ),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientFor(context),
               ),
               child: SafeArea(
                 child: Padding(
@@ -486,7 +483,7 @@ class _ThreatCard extends StatelessWidget {
 
   const _ThreatCard({required this.threat, required this.onTap});
 
-  static const Color _emerald = Color(0xFF059669);
+  static const Color _emerald = AppColors.emerald;
 
   Color _getSeverityColor() {
     switch (threat.severity.toLowerCase()) {
@@ -643,8 +640,8 @@ class _ThreatDetailSheet extends StatelessWidget {
     required this.scrollController,
   });
 
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
+  static const Color _emerald = AppColors.emerald;
+  static const Color _green = AppColors.green;
 
   Color _getSeverityColor() {
     switch (threat.severity.toLowerCase()) {
@@ -947,7 +944,7 @@ class _SectionHeader extends StatelessWidget {
 
   const _SectionHeader({required this.title, required this.icon});
 
-  static const Color _emerald = Color(0xFF059669);
+  static const Color _emerald = AppColors.emerald;
 
   @override
   Widget build(BuildContext context) {

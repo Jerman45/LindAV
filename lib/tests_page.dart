@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'theme_controller.dart';
+import 'widgets/responsive.dart';
+
 class TestsPage extends StatefulWidget {
   const TestsPage({super.key});
 
@@ -163,10 +166,7 @@ class _TestsPageState extends State<TestsPage> with TickerProviderStateMixin {
     });
   }
 
-  // Green color palette
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
-  static const Color _teal = Color(0xFF14B8A6);
+  // Green color palette — used by child widgets via AppColors directly
 
   @override
   Widget build(BuildContext context) {
@@ -182,12 +182,8 @@ class _TestsPageState extends State<TestsPage> with TickerProviderStateMixin {
             right: 0,
             child: Container(
               height: size.height * 0.28,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [_emerald, _green, _teal],
-                ),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientFor(context),
               ),
               child: SafeArea(
                 child: Padding(
@@ -290,81 +286,88 @@ class _TestsPageState extends State<TestsPage> with TickerProviderStateMixin {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                   children: [
-                    _SectionCard(
-                      title: 'Account Security',
-                      subtitle: 'Keep accounts protected and recoverable.',
-                      icon: Icons.shield_outlined,
-                      children: [
-                        _buildChangePasswordTile(),
-                        _buildTwoFactorTile(),
-                        _buildRecoveryOptionsTile(),
-                        _buildLoginAlertsTile(),
-                      ],
+                    ResponsiveBody(
+                      child: Column(
+                        children: [
+                          _SectionCard(
+                            title: 'Account Security',
+                            subtitle:
+                                'Keep accounts protected and recoverable.',
+                            icon: Icons.shield_outlined,
+                            children: [
+                              _buildChangePasswordTile(),
+                              _buildTwoFactorTile(),
+                              _buildRecoveryOptionsTile(),
+                              _buildLoginAlertsTile(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _SectionCard(
+                            title: 'Devices & Sessions',
+                            subtitle: 'Control where you are signed in.',
+                            icon: Icons.devices_outlined,
+                            children: [
+                              _buildActiveSessionsTile(),
+                              _buildLogoutOtherDevicesTile(),
+                              _buildRememberedDevicesTile(),
+                              _buildSessionTimeoutTile(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _SectionCard(
+                            title: 'Privacy & App Lock',
+                            subtitle: 'Protect data on this device.',
+                            icon: Icons.lock_outline,
+                            children: [
+                              _buildAppLockTile(),
+                              _buildHideNotificationsTile(),
+                              _buildScreenshotProtectionTile(),
+                              _buildClipboardProtectionTile(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _SectionCard(
+                            title: 'Permissions',
+                            subtitle: 'Grant only what is necessary.',
+                            icon: Icons.tune_outlined,
+                            children: [
+                              _buildPermissionsDashboardTile(),
+                              _buildPermissionToggles(),
+                              _buildDataAccessLogTile(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _SectionCard(
+                            title: 'Data & Recovery',
+                            subtitle: 'Secure, backup, and manage your data.',
+                            icon: Icons.backup_outlined,
+                            children: [
+                              _buildEncryptionStatusTile(),
+                              _buildBackupRestoreTile(),
+                              _buildDownloadDataTile(),
+                              _buildDeleteAccountTile(),
+                              _buildIncidentReportingTile(),
+                              _buildEvidenceHandlingTile(),
+                              _buildAuditTrailTile(),
+                              _buildEmergencyContactsTile(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _SectionCard(
+                            title: 'Help / Legal',
+                            subtitle: 'Guidance, concerns, and policies.',
+                            icon: Icons.help_outline,
+                            children: [
+                              _buildSecurityTipsTile(),
+                              _buildReportIssueTile(),
+                              _buildPolicyLinksTile(),
+                              _buildVersionInfoTile(),
+                            ],
+                          ),
+                          const SizedBox(height: 32),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    _SectionCard(
-                      title: 'Devices & Sessions',
-                      subtitle: 'Control where you are signed in.',
-                      icon: Icons.devices_outlined,
-                      children: [
-                        _buildActiveSessionsTile(),
-                        _buildLogoutOtherDevicesTile(),
-                        _buildRememberedDevicesTile(),
-                        _buildSessionTimeoutTile(),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _SectionCard(
-                      title: 'Privacy & App Lock',
-                      subtitle: 'Protect data on this device.',
-                      icon: Icons.lock_outline,
-                      children: [
-                        _buildAppLockTile(),
-                        _buildHideNotificationsTile(),
-                        _buildScreenshotProtectionTile(),
-                        _buildClipboardProtectionTile(),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _SectionCard(
-                      title: 'Permissions',
-                      subtitle: 'Grant only what is necessary.',
-                      icon: Icons.tune_outlined,
-                      children: [
-                        _buildPermissionsDashboardTile(),
-                        _buildPermissionToggles(),
-                        _buildDataAccessLogTile(),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _SectionCard(
-                      title: 'Data & Recovery',
-                      subtitle: 'Secure, backup, and manage your data.',
-                      icon: Icons.backup_outlined,
-                      children: [
-                        _buildEncryptionStatusTile(),
-                        _buildBackupRestoreTile(),
-                        _buildDownloadDataTile(),
-                        _buildDeleteAccountTile(),
-                        _buildIncidentReportingTile(),
-                        _buildEvidenceHandlingTile(),
-                        _buildAuditTrailTile(),
-                        _buildEmergencyContactsTile(),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _SectionCard(
-                      title: 'Help / Legal',
-                      subtitle: 'Guidance, concerns, and policies.',
-                      icon: Icons.help_outline,
-                      children: [
-                        _buildSecurityTipsTile(),
-                        _buildReportIssueTile(),
-                        _buildPolicyLinksTile(),
-                        _buildVersionInfoTile(),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -1443,8 +1446,8 @@ class _SectionCard extends StatelessWidget {
   final List<Widget> children;
   final IconData icon;
 
-  static const Color _emerald = Color(0xFF059669);
-  static const Color _green = Color(0xFF10B981);
+  static const Color _emerald = AppColors.emerald;
+  static const Color _green = AppColors.green;
 
   @override
   Widget build(BuildContext context) {
@@ -1544,7 +1547,7 @@ class _IconBadge extends StatelessWidget {
 
   final IconData icon;
 
-  static const Color _emerald = Color(0xFF059669);
+  static const Color _emerald = AppColors.emerald;
 
   @override
   Widget build(BuildContext context) {
@@ -1565,7 +1568,7 @@ class _GuidanceChip extends StatelessWidget {
 
   final String label;
 
-  static const Color _emerald = Color(0xFF059669);
+  static const Color _emerald = AppColors.emerald;
 
   @override
   Widget build(BuildContext context) {

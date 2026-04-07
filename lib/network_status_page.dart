@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'services/network_service.dart';
+import 'theme_controller.dart';
 import 'widgets/network_status_widget.dart';
 
-// Green color palette
-const Color _emerald = Color(0xFF059669);
-const Color _green = Color(0xFF10B981);
-const Color _teal = Color(0xFF14B8A6);
+// Aliases for backward compatibility
+const Color _emerald = AppColors.emerald;
+const Color _green = AppColors.green;
 
 class NetworkStatusPage extends StatefulWidget {
   const NetworkStatusPage({super.key});
@@ -163,12 +163,8 @@ class _NetworkStatusPageState extends State<NetworkStatusPage>
             right: 0,
             child: Container(
               height: size.height * 0.28,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [_emerald, _green, _teal],
-                ),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientFor(context),
               ),
               child: SafeArea(
                 child: Padding(

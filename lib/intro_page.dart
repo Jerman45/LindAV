@@ -5,6 +5,9 @@ import 'network_status_page.dart';
 import 'scan_page.dart';
 import 'splash_page.dart';
 import 'tests_page.dart';
+import 'theme_controller.dart';
+import 'widgets/page_route.dart';
+import 'widgets/responsive.dart';
 
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
@@ -24,16 +27,8 @@ class IntroPage extends StatelessWidget {
             right: 0,
             child: Container(
               height: size.height * 0.35,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF059669), // Emerald
-                    Color(0xFF10B981), // Green
-                    Color(0xFF14B8A6), // Teal
-                  ],
-                ),
+              decoration: BoxDecoration(
+                gradient: AppColors.gradientFor(context),
               ),
               child: Stack(
                 children: [
@@ -66,9 +61,7 @@ class IntroPage extends StatelessWidget {
                               TextButton.icon(
                                 onPressed: () =>
                                     Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (_) => const SplashPage(),
-                                      ),
+                                      appPageRoute(const SplashPage()),
                                       (route) => false,
                                     ),
                                 icon: const Icon(
@@ -99,9 +92,7 @@ class IntroPage extends StatelessWidget {
                               TextButton.icon(
                                 onPressed: () =>
                                     Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (_) => const HomePage(),
-                                      ),
+                                      appPageRoute(const HomePage()),
                                     ),
                                 icon: const Icon(
                                   Icons.exit_to_app,
@@ -187,106 +178,109 @@ class IntroPage extends StatelessWidget {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Welcome section
-                    Text(
-                      'Welcome !',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Choose how you want to begin. You can run a scan, take security readiness tests, or inspect your network connection.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.outline,
-                        height: 1.5,
+                child: ResponsiveBody(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Welcome section
+                      Text(
+                        'Welcome !',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    const SizedBox(height: 28),
-
-                    // Action tiles
-                    _IntroTile(
-                      icon: Icons.shield,
-                      title: 'Start Scanning',
-                      description:
-                          'Perform quick, full, or USB scans to check for suspicious files on your device.',
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF059669), Color(0xFF10B981)],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ScanPage()),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _IntroTile(
-                      icon: Icons.quiz_outlined,
-                      title: 'Security Center',
-                      description:
-                          'Manage account protection, device sessions, privacy settings, and security monitoring.',
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF10B981), Color(0xFF14B8A6)],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const TestsPage()),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _IntroTile(
-                      icon: Icons.wifi,
-                      title: 'Check Network Health',
-                      description:
-                          'Measure your connectivity quality, speed, and latency for safer browsing.',
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const NetworkStatusPage(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Choose how you want to begin. You can run a scan, take security readiness tests, or inspect your network connection.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.outline,
+                          height: 1.5,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    _IntroTile(
-                      icon: Icons.home_outlined,
-                      title: 'Go to Dashboard',
-                      description:
-                          'View quick actions and manage your protection experience from the central hub.',
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF047857), Color(0xFF065F46)],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const HomePage()),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 28),
 
-                    // Footer
-                    Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            'JERMAN TECHNOLOGY',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.outline,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Technology with purpose',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: colorScheme.outline.withAlpha(150),
-                            ),
-                          ),
-                        ],
+                      // Action tiles
+                      _IntroTile(
+                        icon: Icons.shield,
+                        title: 'Start Scanning',
+                        description:
+                            'Perform quick, full, or USB scans to check for suspicious files on your device.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.emerald, AppColors.green],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const ScanPage())),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      _IntroTile(
+                        icon: Icons.quiz_outlined,
+                        title: 'Security Center',
+                        description:
+                            'Manage account protection, device sessions, privacy settings, and security monitoring.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.green, AppColors.teal],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const TestsPage())),
+                      ),
+                      const SizedBox(height: 16),
+                      _IntroTile(
+                        icon: Icons.wifi,
+                        title: 'Check Network Health',
+                        description:
+                            'Measure your connectivity quality, speed, and latency for safer browsing.',
+                        gradient: const LinearGradient(
+                          colors: [AppColors.teal, AppColors.deepTeal],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const NetworkStatusPage())),
+                      ),
+                      const SizedBox(height: 16),
+                      _IntroTile(
+                        icon: Icons.home_outlined,
+                        title: 'Go to Dashboard',
+                        description:
+                            'View quick actions and manage your protection experience from the central hub.',
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.deepEmerald,
+                            AppColors.darkEmerald,
+                          ],
+                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(appPageRoute(const HomePage())),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Footer
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'JERMAN TECHNOLOGY',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.outline,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Technology with purpose',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: colorScheme.outline.withAlpha(150),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
