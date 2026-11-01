@@ -97,6 +97,9 @@ class NetworkService {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
+  DateTime? _lastSpeedCheckAt;
+  static const Duration _speedCheckCooldown = Duration(seconds: 8);
+
   /// Initialize the network service and start monitoring
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -105,7 +108,7 @@ class NetworkService {
     await _checkConnectivity();
 
     // Listen for connectivity changes
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+    _connectivitySubscription ??= _connectivity.onConnectivityChanged.listen((
       List<ConnectivityResult> results,
     ) {
       _handleConnectivityChange(results);
@@ -115,8 +118,8 @@ class NetworkService {
   /// Dispose the service
   void dispose() {
     _connectivitySubscription?.cancel();
+    _connectivitySubscription = null;
     _isInitialized = false;
-    _statusController.close();
   }
 
   Future<void> _checkConnectivity() async {
@@ -159,28 +162,28 @@ class NetworkService {
 
     final types = <String>[];
     for (final result in results) {
-      switch (result) {
-        case ConnectivityResult.wifi:
-          types.add('WiFi');
-          break;
-        case ConnectivityResult.mobile:
-          types.add('Mobile Data');
-          break;
-        case ConnectivityResult.ethernet:
-          types.add('Ethernet');
-          break;
-        case ConnectivityResult.vpn:
-          types.add('VPN');
-          break;
-        case ConnectivityResult.bluetooth:
-          types.add('Bluetooth');
-          break;
-        case ConnectivityResult.other:
-          types.add('Other');
-          break;
-        case ConnectivityResult.none:
-          break;
-      }
+      // switch (result) {
+      //   case ConnectivityResult.wifi:
+      //     types.add('WiFi');
+      //     break;
+      //   case ConnectivityResult.mobile:
+      //     types.add('Mobile Data');
+      //     break;
+      //   case ConnectivityResult.ethernet:
+      //     types.add('Ethernet');
+      //     break;
+      //   case ConnectivityResult.vpn:
+      //     types.add('VPN');
+      //     break;
+      //   case ConnectivityResult.bluetooth:
+      //     types.add('Bluetooth');
+      //     break;
+      //   case ConnectivityResult.other:
+      //     types.add('Other');
+      //     break;
+      //   case ConnectivityResult.none:
+      //     break;
+      // }
     }
 
     return types.isEmpty ? 'Unknown' : types.join(' + ');
@@ -190,6 +193,13 @@ class NetworkService {
   Future<void> testNetworkSpeed() async {
     if (_isTestingSpeed) return;
     if (!_currentStatus.isConnected) return;
+
+    final now = DateTime.now();
+    if (_lastSpeedCheckAt != null &&
+        now.difference(_lastSpeedCheckAt!) < _speedCheckCooldown) {
+      return;
+    }
+    _lastSpeedCheckAt = now;
 
     _isTestingSpeed = true;
     _statusController.add(_currentStatus);
