@@ -37,15 +37,6 @@ class _ScanPageState extends State<ScanPage> {
     _loadHistory();
   }
 
-  Future<Directory> _getDataDirectory() async {
-    final dir = await getApplicationSupportDirectory();
-    final appDir = Directory('${dir.path}${Platform.pathSeparator}lindav');
-    if (!await appDir.exists()) {
-      await appDir.create(recursive: true);
-    }
-    return appDir;
-  }
-
   Future<void> _loadHistory() async {
     try {
       final dir = await _getDataDirectory();
@@ -856,6 +847,36 @@ class ScanResult {
             .toList() ??
         [],
   );
+}
+
+Future<ScanResult?> loadLatestScanResult() async {
+  final dir = await _getDataDirectory();
+  final file = File('${dir.path}${Platform.pathSeparator}history.json');
+  if (!await file.exists()) return null;
+
+  final content = await file.readAsString();
+  if (content.isEmpty) return null;
+
+  final raw = jsonDecode(content);
+  if (raw is! List) {
+    throw const FormatException('Invalid scan history data.');
+  }
+  if (raw.isEmpty) return null;
+
+  final latest = raw.first;
+  if (latest is! Map<String, dynamic>) {
+    throw const FormatException('Invalid scan history entry.');
+  }
+  return ScanResult.fromJson(latest);
+}
+
+Future<Directory> _getDataDirectory() async {
+  final dir = await getApplicationSupportDirectory();
+  final appDir = Directory('${dir.path}${Platform.pathSeparator}lindav');
+  if (!await appDir.exists()) {
+    await appDir.create(recursive: true);
+  }
+  return appDir;
 }
 
 String _formatDateTime(DateTime dateTime) {
